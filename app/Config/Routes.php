@@ -248,6 +248,36 @@ $routes->group(
             'Api\V1\Admin\JournalController::delete/$1',
             ['filter' => 'permission:journal-delete']
         );
+
+        $routes->get(
+            'disciplines',
+            'Api\V1\Admin\DisciplineController::index',
+            ['filter' => 'permission:discipline-view']
+        );
+
+        $routes->post(
+            'disciplines',
+            'Api\V1\Admin\DisciplineController::create',
+            ['filter' => 'permission:discipline-create']
+        );
+
+        $routes->get(
+            'disciplines/(:segment)',
+            'Api\V1\Admin\DisciplineController::show/$1',
+            ['filter' => 'permission:discipline-view']
+        );
+
+        $routes->put(
+            'disciplines/(:segment)',
+            'Api\V1\Admin\DisciplineController::update/$1',
+            ['filter' => 'permission:discipline-edit']
+        );
+
+        $routes->delete(
+            'disciplines/(:segment)',
+            'Api\V1\Admin\DisciplineController::delete/$1',
+            ['filter' => 'permission:discipline-delete']
+        );
     }
 );
 
@@ -276,6 +306,16 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'journals/(:segment)',
         'Api\V1\Public\JournalController::show/$1'
+    );
+
+    $routes->get(
+        'disciplines',
+        'Api\V1\Public\DisciplineController::index'
+    );
+
+    $routes->get(
+        'disciplines/(:segment)',
+        'Api\V1\Public\DisciplineController::show/$1'
     );
     
 });
