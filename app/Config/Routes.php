@@ -218,6 +218,36 @@ $routes->group(
             'Api\V1\Admin\ArticleTypeController::delete/$1',
             ['filter' => 'permission:article-type-delete']
         );
+
+        $routes->get(
+            'journals',
+            'Api\V1\Admin\JournalController::index',
+            ['filter' => 'permission:journal-view']
+        );
+
+        $routes->post(
+            'journals',
+            'Api\V1\Admin\JournalController::create',
+            ['filter' => 'permission:journal-create']
+        );
+
+        $routes->get(
+            'journals/(:segment)',
+            'Api\V1\Admin\JournalController::show/$1',
+            ['filter' => 'permission:journal-view']
+        );
+
+        $routes->put(
+            'journals/(:segment)',
+            'Api\V1\Admin\JournalController::update/$1',
+            ['filter' => 'permission:journal-edit']
+        );
+
+        $routes->delete(
+            'journals/(:segment)',
+            'Api\V1\Admin\JournalController::delete/$1',
+            ['filter' => 'permission:journal-delete']
+        );
     }
 );
 
@@ -237,4 +267,15 @@ $routes->group('api/v1/public', static function ($routes) {
         'article-types/(:segment)',
         'Api\V1\Public\ArticleTypeController::show/$1'
     );
+
+    $routes->get(
+        'journals',
+        'Api\V1\Public\JournalController::index'
+    );
+
+    $routes->get(
+        'journals/(:segment)',
+        'Api\V1\Public\JournalController::show/$1'
+    );
+    
 });
