@@ -188,6 +188,36 @@ $routes->group(
                 'filter' => 'permission:profile-delete'
             ]
         );
+
+        $routes->get(
+            'article-types',
+            'Api\V1\Admin\ArticleTypeController::index',
+            ['filter' => 'permission:article-type-view']
+        );
+
+        $routes->post(
+            'article-types',
+            'Api\V1\Admin\ArticleTypeController::create',
+            ['filter' => 'permission:article-type-create']
+        );
+
+        $routes->get(
+            'article-types/(:segment)',
+            'Api\V1\Admin\ArticleTypeController::show/$1',
+            ['filter' => 'permission:article-type-view']
+        );
+
+        $routes->put(
+            'article-types/(:segment)',
+            'Api\V1\Admin\ArticleTypeController::update/$1',
+            ['filter' => 'permission:article-type-edit']
+        );
+
+        $routes->delete(
+            'article-types/(:segment)',
+            'Api\V1\Admin\ArticleTypeController::delete/$1',
+            ['filter' => 'permission:article-type-delete']
+        );
     }
 );
 
@@ -197,4 +227,14 @@ $routes->group(
 |--------------------------------------------------------------------------
 */
 
-$routes->group('api/v1/public', static function ($routes) {});
+$routes->group('api/v1/public', static function ($routes) {
+    $routes->get(
+        'article-types',
+        'Api\V1\Public\ArticleTypeController::index'
+    );
+
+    $routes->get(
+        'article-types/(:segment)',
+        'Api\V1\Public\ArticleTypeController::show/$1'
+    );
+});
