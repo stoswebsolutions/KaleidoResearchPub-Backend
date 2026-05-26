@@ -14,8 +14,11 @@ class PermissionFilter implements FilterInterface
         RequestInterface $request,
         $arguments = null
     ) {
+        $authUser = service('authUser');
+
         if (
-            ! isset($request->user)
+            ! isset($authUser->profileId) ||
+            ! isset($authUser->roleId)
         ) {
             return service('response')
                 ->setStatusCode(
@@ -42,65 +45,19 @@ class PermissionFilter implements FilterInterface
                 );
         }
 
-        $user = $request->user;
-
-        $db = db_connect();
-
-        /**
-         * Direct profile permission.
-         */
-        $profilePermission = $db
-            ->table('profile_permissions pp')
-            ->select('pp.id')
-            ->join(
-                'permissions p',
-                'p.id = pp.permission_id'
-            )
-            ->where(
-                'pp.profile_id',
-                $user->profile_id
-            )
-            ->where(
-                'p.slug',
-                $requiredPermission
-            )
-            ->where(
-                'pp.status',
-                'active'
-            )
-            ->get()
-            ->getRow();
-
-        if ($profilePermission !== null) {
-            return;
-        }
-
-        /**
-         * Role permission.
-         */
-        $rolePermission = $db
+        $hasPermission = db_connect()
             ->table('role_permissions rp')
-            ->select('rp.id')
             ->join(
                 'permissions p',
                 'p.id = rp.permission_id'
             )
             ->where(
                 'rp.role_id',
-                $user->role_id
+                $authUser->roleId
             )
-            ->where(
-                'p.slug',
-                $requiredPermission
-            )
-            ->where(
-                'rp.status',
-                'active'
-            )
-            ->get()
-            ->getRow();
+            ->countAllResults() > 0;
 
-        if ($rolePermission !== null) {
+        if ($hasPermission) {
             return;
         }
 
