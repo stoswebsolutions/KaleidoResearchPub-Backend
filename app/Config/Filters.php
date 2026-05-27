@@ -35,7 +35,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'auth' => \App\Filters\AuthFilter::class,
         'permission' => \App\Filters\PermissionFilter::class,
-        'cors' => \App\Filters\CorsFilter::class,
+        'cors' => \App\Filters\CORS::class,
     ];
 
     /**
@@ -74,11 +74,13 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
+            'cors',
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
         ],
         'after' => [
+            'cors',
             // 'honeypot',
             // 'secureheaders',
         ],
