@@ -386,6 +386,36 @@ $routes->group(
             'Api\V1\Admin\IndexedPartnerController::delete/$1',
             ['filter' => 'permission:indexed-partner-delete']
         );
+
+        $routes->get(
+            'cms-features',
+            'Api\V1\Admin\CmsFeatureController::index',
+            ['filter' => 'permission:cms-feature-view']
+        );
+
+        $routes->post(
+            'cms-features',
+            'Api\V1\Admin\CmsFeatureController::create',
+            ['filter' => 'permission:cms-feature-create']
+        );
+
+        $routes->get(
+            'cms-features/(:segment)',
+            'Api\V1\Admin\CmsFeatureController::show/$1',
+            ['filter' => 'permission:cms-feature-view']
+        );
+
+        $routes->put(
+            'cms-features/(:segment)',
+            'Api\V1\Admin\CmsFeatureController::update/$1',
+            ['filter' => 'permission:cms-feature-edit']
+        );
+
+        $routes->delete(
+            'cms-features/(:segment)',
+            'Api\V1\Admin\CmsFeatureController::delete/$1',
+            ['filter' => 'permission:cms-feature-delete']
+        );
     }
 );
 
@@ -454,5 +484,15 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'indexed-partners/(:segment)',
         'Api\V1\Public\IndexedPartnerController::show/$1'
+    );
+
+    $routes->get(
+        'cms-features',
+        'Api\V1\Public\CmsFeatureController::index'
+    );
+
+    $routes->get(
+        'cms-features/(:segment)',
+        'Api\V1\Public\CmsFeatureController::show/$1'
     );
 });
