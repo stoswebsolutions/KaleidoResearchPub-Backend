@@ -326,6 +326,36 @@ $routes->group(
             'Api\V1\Admin\SubscriptionPlanController::delete/$1',
             ['filter' => 'permission:subscription-plan-delete']
         );
+
+        $routes->get(
+            'academic-partners',
+            'Api\V1\Admin\AcademicPartnerController::index',
+            ['filter' => 'permission:academic-partner-view']
+        );
+
+        $routes->post(
+            'academic-partners',
+            'Api\V1\Admin\AcademicPartnerController::create',
+            ['filter' => 'permission:academic-partner-create']
+        );
+
+        $routes->get(
+            'academic-partners/(:segment)',
+            'Api\V1\Admin\AcademicPartnerController::show/$1',
+            ['filter' => 'permission:academic-partner-view']
+        );
+
+        $routes->put(
+            'academic-partners/(:segment)',
+            'Api\V1\Admin\AcademicPartnerController::update/$1',
+            ['filter' => 'permission:academic-partner-edit']
+        );
+
+        $routes->delete(
+            'academic-partners/(:segment)',
+            'Api\V1\Admin\AcademicPartnerController::delete/$1',
+            ['filter' => 'permission:academic-partner-delete']
+        );
     }
 );
 
@@ -376,4 +406,13 @@ $routes->group('api/v1/public', static function ($routes) {
         'Api\V1\Public\SubscriptionPlanController::show/$1'
     );
 
+    $routes->get(
+        'academic-partners',
+        'Api\V1\Public\AcademicPartnerController::index'
+    );
+
+    $routes->get(
+        'academic-partners/(:segment)',
+        'Api\V1\Public\AcademicPartnerController::show/$1'
+    );
 });
