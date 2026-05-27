@@ -356,6 +356,36 @@ $routes->group(
             'Api\V1\Admin\AcademicPartnerController::delete/$1',
             ['filter' => 'permission:academic-partner-delete']
         );
+
+        $routes->get(
+            'indexed-partners',
+            'Api\V1\Admin\IndexedPartnerController::index',
+            ['filter' => 'permission:indexed-partner-view']
+        );
+
+        $routes->post(
+            'indexed-partners',
+            'Api\V1\Admin\IndexedPartnerController::create',
+            ['filter' => 'permission:indexed-partner-create']
+        );
+
+        $routes->get(
+            'indexed-partners/(:segment)',
+            'Api\V1\Admin\IndexedPartnerController::show/$1',
+            ['filter' => 'permission:indexed-partner-view']
+        );
+
+        $routes->put(
+            'indexed-partners/(:segment)',
+            'Api\V1\Admin\IndexedPartnerController::update/$1',
+            ['filter' => 'permission:indexed-partner-edit']
+        );
+
+        $routes->delete(
+            'indexed-partners/(:segment)',
+            'Api\V1\Admin\IndexedPartnerController::delete/$1',
+            ['filter' => 'permission:indexed-partner-delete']
+        );
     }
 );
 
@@ -414,5 +444,15 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'academic-partners/(:segment)',
         'Api\V1\Public\AcademicPartnerController::show/$1'
+    );
+
+    $routes->get(
+        'indexed-partners',
+        'Api\V1\Public\IndexedPartnerController::index'
+    );
+
+    $routes->get(
+        'indexed-partners/(:segment)',
+        'Api\V1\Public\IndexedPartnerController::show/$1'
     );
 });
