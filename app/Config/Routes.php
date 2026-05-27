@@ -416,6 +416,36 @@ $routes->group(
             'Api\V1\Admin\CmsFeatureController::delete/$1',
             ['filter' => 'permission:cms-feature-delete']
         );
+
+        $routes->get(
+            'cms-pages',
+            'Api\V1\Admin\CmsPageController::index',
+            ['filter' => 'permission:cms-page-view']
+        );
+
+        $routes->post(
+            'cms-pages',
+            'Api\V1\Admin\CmsPageController::create',
+            ['filter' => 'permission:cms-page-create']
+        );
+
+        $routes->get(
+            'cms-pages/(:segment)',
+            'Api\V1\Admin\CmsPageController::show/$1',
+            ['filter' => 'permission:cms-page-view']
+        );
+
+        $routes->put(
+            'cms-pages/(:segment)',
+            'Api\V1\Admin\CmsPageController::update/$1',
+            ['filter' => 'permission:cms-page-edit']
+        );
+
+        $routes->delete(
+            'cms-pages/(:segment)',
+            'Api\V1\Admin\CmsPageController::delete/$1',
+            ['filter' => 'permission:cms-page-delete']
+        );
     }
 );
 
@@ -494,5 +524,20 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'cms-features/(:segment)',
         'Api\V1\Public\CmsFeatureController::show/$1'
+    );
+
+    $routes->get(
+        'cms-pages',
+        'Api\V1\Public\CmsPageController::index'
+    );
+
+    $routes->get(
+        'cms-pages/page-key/(:segment)',
+        'Api\V1\Public\CmsPageController::showByPageKey/$1'
+    );
+
+    $routes->get(
+        'cms-pages/(:segment)',
+        'Api\V1\Public\CmsPageController::show/$1'
     );
 });
