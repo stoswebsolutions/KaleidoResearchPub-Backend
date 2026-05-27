@@ -476,6 +476,54 @@ $routes->group(
             'Api\V1\Admin\ContactSettingController::delete/$1',
             ['filter' => 'permission:contact-setting-delete']
         );
+
+        $routes->get(
+            'contact-messages',
+            'Api\V1\Admin\ContactMessageController::index',
+            ['filter' => 'permission:contact-message-view']
+        );
+
+        $routes->post(
+            'contact-messages',
+            'Api\V1\Admin\ContactMessageController::create',
+            ['filter' => 'permission:contact-message-create']
+        );
+
+        $routes->get(
+            'contact-messages/(:segment)',
+            'Api\V1\Admin\ContactMessageController::show/$1',
+            ['filter' => 'permission:contact-message-view']
+        );
+
+        $routes->put(
+            'contact-messages/(:segment)',
+            'Api\V1\Admin\ContactMessageController::update/$1',
+            ['filter' => 'permission:contact-message-edit']
+        );
+
+        $routes->delete(
+            'contact-messages/(:segment)',
+            'Api\V1\Admin\ContactMessageController::delete/$1',
+            ['filter' => 'permission:contact-message-delete']
+        );
+
+        $routes->patch(
+            'contact-messages/(:segment)/mark-read',
+            'Api\V1\Admin\ContactMessageController::markRead/$1',
+            ['filter' => 'permission:contact-message-edit']
+        );
+
+        $routes->patch(
+            'contact-messages/(:segment)/mark-unread',
+            'Api\V1\Admin\ContactMessageController::markUnread/$1',
+            ['filter' => 'permission:contact-message-edit']
+        );
+
+        $routes->patch(
+            'contact-messages/(:segment)/resolve',
+            'Api\V1\Admin\ContactMessageController::markResolved/$1',
+            ['filter' => 'permission:contact-message-edit']
+        );
     }
 );
 
@@ -584,5 +632,15 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'contact-settings/(:segment)',
         'Api\V1\Public\ContactSettingController::show/$1'
+    );
+
+    $routes->post(
+        'contact-messages',
+        'Api\V1\Public\ContactMessageController::create'
+    );
+
+    $routes->get(
+        'contact-messages/(:segment)',
+        'Api\V1\Public\ContactMessageController::show/$1'
     );
 });
