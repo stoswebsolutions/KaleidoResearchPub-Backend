@@ -296,6 +296,36 @@ $routes->group(
             'Api\V1\Admin\DisciplineController::delete/$1',
             ['filter' => 'permission:discipline-delete']
         );
+
+        $routes->get(
+            'subscription-plans',
+            'Api\V1\Admin\SubscriptionPlanController::index',
+            ['filter' => 'permission:subscription-plan-view']
+        );
+
+        $routes->post(
+            'subscription-plans',
+            'Api\V1\Admin\SubscriptionPlanController::create',
+            ['filter' => 'permission:subscription-plan-create']
+        );
+
+        $routes->get(
+            'subscription-plans/(:segment)',
+            'Api\V1\Admin\SubscriptionPlanController::show/$1',
+            ['filter' => 'permission:subscription-plan-view']
+        );
+
+        $routes->put(
+            'subscription-plans/(:segment)',
+            'Api\V1\Admin\SubscriptionPlanController::update/$1',
+            ['filter' => 'permission:subscription-plan-edit']
+        );
+
+        $routes->delete(
+            'subscription-plans/(:segment)',
+            'Api\V1\Admin\SubscriptionPlanController::delete/$1',
+            ['filter' => 'permission:subscription-plan-delete']
+        );
     }
 );
 
@@ -335,5 +365,15 @@ $routes->group('api/v1/public', static function ($routes) {
         'disciplines/(:segment)',
         'Api\V1\Public\DisciplineController::show/$1'
     );
-    
+
+    $routes->get(
+        'subscription-plans',
+        'Api\V1\Public\SubscriptionPlanController::index'
+    );
+
+    $routes->get(
+        'subscription-plans/(:segment)',
+        'Api\V1\Public\SubscriptionPlanController::show/$1'
+    );
+
 });
