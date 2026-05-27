@@ -446,6 +446,36 @@ $routes->group(
             'Api\V1\Admin\CmsPageController::delete/$1',
             ['filter' => 'permission:cms-page-delete']
         );
+
+        $routes->get(
+            'contact-settings',
+            'Api\V1\Admin\ContactSettingController::index',
+            ['filter' => 'permission:contact-setting-view']
+        );
+
+        $routes->post(
+            'contact-settings',
+            'Api\V1\Admin\ContactSettingController::create',
+            ['filter' => 'permission:contact-setting-create']
+        );
+
+        $routes->get(
+            'contact-settings/(:segment)',
+            'Api\V1\Admin\ContactSettingController::show/$1',
+            ['filter' => 'permission:contact-setting-view']
+        );
+
+        $routes->put(
+            'contact-settings/(:segment)',
+            'Api\V1\Admin\ContactSettingController::update/$1',
+            ['filter' => 'permission:contact-setting-edit']
+        );
+
+        $routes->delete(
+            'contact-settings/(:segment)',
+            'Api\V1\Admin\ContactSettingController::delete/$1',
+            ['filter' => 'permission:contact-setting-delete']
+        );
     }
 );
 
@@ -539,5 +569,20 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'cms-pages/(:segment)',
         'Api\V1\Public\CmsPageController::show/$1'
+    );
+
+    $routes->get(
+        'contact-settings',
+        'Api\V1\Public\ContactSettingController::index'
+    );
+
+    $routes->get(
+        'contact-settings/active',
+        'Api\V1\Public\ContactSettingController::active'
+    );
+
+    $routes->get(
+        'contact-settings/(:segment)',
+        'Api\V1\Public\ContactSettingController::show/$1'
     );
 });
