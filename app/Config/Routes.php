@@ -102,7 +102,7 @@ $routes->group(
         $routes->put(
             'roles/(:segment)',
             'Api\V1\Admin\RoleController::update/$1',
-            ['filter' => 'permission:roles-update']
+            ['filter' => 'permission:roles-edit']
         );
 
         $routes->delete(
@@ -553,6 +553,36 @@ $routes->group(
             'editor-profiles/(:segment)',
             'Api\V1\Admin\EditorProfileController::delete/$1',
             ['filter' => 'permission:editor-profile-delete']
+        );
+
+        $routes->get(
+            'author-profiles',
+            'Api\V1\Admin\AuthorProfileController::index',
+            ['filter' => 'permission:author-profile-view']
+        );
+
+        $routes->post(
+            'author-profiles',
+            'Api\V1\Admin\AuthorProfileController::create',
+            ['filter' => 'permission:author-profile-create']
+        );
+
+        $routes->get(
+            'author-profiles/(:segment)',
+            'Api\V1\Admin\AuthorProfileController::show/$1',
+            ['filter' => 'permission:author-profile-view']
+        );
+
+        $routes->put(
+            'author-profiles/(:segment)',
+            'Api\V1\Admin\AuthorProfileController::update/$1',
+            ['filter' => 'permission:author-profile-edit']
+        );
+
+        $routes->delete(
+            'author-profiles/(:segment)',
+            'Api\V1\Admin\AuthorProfileController::delete/$1',
+            ['filter' => 'permission:author-profile-delete']
         );
     }
 );
