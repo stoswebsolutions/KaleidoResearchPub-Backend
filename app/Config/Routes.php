@@ -564,6 +564,17 @@ $routes->group(
 */
 
 $routes->group('api/v1/public', static function ($routes) {
+
+    $routes->post(
+        'profiles/register',
+        'Api\V1\Public\ProfileController::register'
+    );
+
+    $routes->get(
+        'profiles/(:segment)',
+        'Api\V1\Public\ProfileController::show/$1'
+    );
+
     $routes->get(
         'article-types',
         'Api\V1\Public\ArticleTypeController::index'
