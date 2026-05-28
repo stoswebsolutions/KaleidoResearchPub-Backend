@@ -124,6 +124,11 @@ class ProfileController extends BaseApiController
                     'left'
                 );
 
+            $builder = $this->applyOwnershipFilter(
+                $builder,
+                'profiles'
+            );
+
             if ($search !== '') {
 
                 $builder->groupStart()
@@ -236,6 +241,17 @@ class ProfileController extends BaseApiController
                 return $this->notFoundResponse(
                     'Profile not found.'
                 );
+            }
+
+            $ownershipCheck = $this->validateOwnership(
+                $profile
+            );
+
+            if (
+                $ownershipCheck
+                instanceof ResponseInterface
+            ) {
+                return $ownershipCheck;
             }
 
             return $this->successResponse(
@@ -391,6 +407,17 @@ class ProfileController extends BaseApiController
                 );
             }
 
+            $ownershipCheck = $this->validateOwnership(
+                $profile
+            );
+
+            if (
+                $ownershipCheck
+                instanceof ResponseInterface
+            ) {
+                return $ownershipCheck;
+            }
+
             $payload = $this->request->getJSON(true);
 
             if (! is_array($payload)) {
@@ -500,6 +527,17 @@ class ProfileController extends BaseApiController
                 return $this->notFoundResponse(
                     'Profile not found.'
                 );
+            }
+
+            $ownershipCheck = $this->validateOwnership(
+                $profile
+            );
+
+            if (
+                $ownershipCheck
+                instanceof ResponseInterface
+            ) {
+                return $ownershipCheck;
             }
 
             $authUser = service('authUser');

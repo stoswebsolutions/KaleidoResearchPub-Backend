@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controllers\Api\V1;
 
-use CodeIgniter\RESTful\ResourceController;
+use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\RESTful\ResourceController;
 
 abstract class BaseApiController extends ResourceController
 {
@@ -28,6 +29,105 @@ abstract class BaseApiController extends ResourceController
      * Current authenticated role id.
      */
     protected ?int $roleId = null;
+
+    /**
+     * Current authenticated role name.
+     */
+    protected ?string $roleName = null;
+
+    public function initController(
+        \CodeIgniter\HTTP\RequestInterface $request,
+        \CodeIgniter\HTTP\ResponseInterface $response,
+        \Psr\Log\LoggerInterface $logger
+    ): void {
+        parent::initController(
+            $request,
+            $response,
+            $logger
+        );
+
+        $authUser = service('authUser');
+
+        if ($authUser) {
+
+            $this->profile = $authUser->profile ?? null;
+
+            $this->profileId = isset(
+                $authUser->profileId
+            )
+                ? (int) $authUser->profileId
+                : null;
+
+            $this->roleId = isset(
+                $authUser->roleId
+            )
+                ? (int) $authUser->roleId
+                : null;
+
+            $this->roleName = isset(
+                $authUser->roleName
+            )
+                ? (string) $authUser->roleName
+                : null;
+        }
+    }
+
+    /**
+     * Check super admin access.
+     */
+    protected function isSuperAdmin(): bool
+    {
+        return strtolower(
+            (string) $this->roleName
+        ) === 'super-admin';
+    }
+
+    /**
+     * Apply ownership filter.
+     */
+    protected function applyOwnershipFilter(
+        $builder,
+        string $table = ''
+    ) {
+
+        if ($this->isSuperAdmin()) {
+            return $builder;
+        }
+
+        $field = $table !== ''
+            ? $table . '.created_by'
+            : 'created_by';
+
+        return $builder->where(
+            $field,
+            $this->profileId
+        );
+    }
+
+    /**
+     * Validate ownership.
+     */
+    protected function validateOwnership(
+        array $record
+    ): ?ResponseInterface {
+
+        if ($this->isSuperAdmin()) {
+            return null;
+        }
+
+        if (
+            (int) (
+                $record['created_by']
+                ?? 0
+            ) !== (int) $this->profileId
+        ) {
+            return $this->forbiddenResponse(
+                'You do not have access to this record.'
+            );
+        }
+
+        return null;
+    }
 
     /**
      * Return success response.
@@ -170,9 +270,13 @@ abstract class BaseApiController extends ResourceController
     protected function getPagination(): array
     {
         $page = (int) $this->request->getGet('page');
-        $perPage = (int) $this->request->getGet('per_page');
 
-        $page = $page > 0 ? $page : 1;
+        $perPage = (int) $this->request
+            ->getGet('per_page');
+
+        $page = $page > 0
+            ? $page
+            : 1;
 
         $perPage = match (true) {
             $perPage < 1 => 10,
@@ -196,10 +300,12 @@ abstract class BaseApiController extends ResourceController
         int $perPage
     ): array {
         return [
-            'total'         => $total,
-            'per_page'      => $perPage,
-            'current_page'  => $page,
-            'total_pages'   => (int) ceil($total / $perPage),
+            'total' => $total,
+            'per_page' => $perPage,
+            'current_page' => $page,
+            'total_pages' => (int) ceil(
+                $total / $perPage
+            ),
         ];
     }
 }
