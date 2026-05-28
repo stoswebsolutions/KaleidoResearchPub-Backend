@@ -524,6 +524,36 @@ $routes->group(
             'Api\V1\Admin\ContactMessageController::markResolved/$1',
             ['filter' => 'permission:contact-message-edit']
         );
+
+        $routes->get(
+            'editor-profiles',
+            'Api\V1\Admin\EditorProfileController::index',
+            ['filter' => 'permission:editor-profile-view']
+        );
+
+        $routes->post(
+            'editor-profiles',
+            'Api\V1\Admin\EditorProfileController::create',
+            ['filter' => 'permission:editor-profile-create']
+        );
+
+        $routes->get(
+            'editor-profiles/(:segment)',
+            'Api\V1\Admin\EditorProfileController::show/$1',
+            ['filter' => 'permission:editor-profile-view']
+        );
+
+        $routes->put(
+            'editor-profiles/(:segment)',
+            'Api\V1\Admin\EditorProfileController::update/$1',
+            ['filter' => 'permission:editor-profile-edit']
+        );
+
+        $routes->delete(
+            'editor-profiles/(:segment)',
+            'Api\V1\Admin\EditorProfileController::delete/$1',
+            ['filter' => 'permission:editor-profile-delete']
+        );
     }
 );
 
@@ -642,5 +672,15 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'contact-messages/(:segment)',
         'Api\V1\Public\ContactMessageController::show/$1'
+    );
+
+    $routes->get(
+        'editor-profiles',
+        'Api\V1\Public\EditorProfileController::index'
+    );
+
+    $routes->get(
+        'editor-profiles/(:segment)',
+        'Api\V1\Public\EditorProfileController::show/$1'
     );
 });
