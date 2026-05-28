@@ -17,26 +17,26 @@ class PermissionSeeder extends Seeder
             // =====================================================
             [
                 'module'      => 'roles',
-                'name'        => 'Role View',
-                'slug'        => generate_slug('role-view'),
+                'name'        => 'Roles View',
+                'slug'        => generate_slug('roles-view'),
                 'description' => 'View roles.',
             ],
             [
                 'module'      => 'roles',
-                'name'        => 'Role Create',
-                'slug'        => generate_slug('role-create'),
+                'name'        => 'Roles Create',
+                'slug'        => generate_slug('roles-create'),
                 'description' => 'Create roles.',
             ],
             [
                 'module'      => 'roles',
-                'name'        => 'Role Edit',
-                'slug'        => generate_slug('role-edit'),
+                'name'        => 'Roles Edit',
+                'slug'        => generate_slug('roles-edit'),
                 'description' => 'Edit roles.',
             ],
             [
                 'module'      => 'roles',
-                'name'        => 'Role Delete',
-                'slug'        => generate_slug('role-delete'),
+                'name'        => 'Roles Delete',
+                'slug'        => generate_slug('roles-delete'),
                 'description' => 'Delete roles.',
             ],
 

@@ -56,8 +56,12 @@ class PermissionFilter implements FilterInterface
                 $authUser->roleId
             )
             ->where(
-                'p.name',
+                'p.slug',
                 $requiredPermission
+            )
+            ->where(
+                'p.status', 
+                'active' 
             )
             ->countAllResults() > 0;
 
