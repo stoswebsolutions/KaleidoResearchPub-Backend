@@ -95,6 +95,22 @@ class PermissionSeeder extends Seeder
                 'slug'        => generate_slug('profile-delete'),
                 'description' => 'Delete profiles.',
             ],
+
+            // =====================================================
+            // Role Permission
+            // =====================================================
+            [
+                'module'      => 'Role Permissions',
+                'name'        => 'Role Permissions View',
+                'slug'        => generate_slug('role-permissions-view'),
+                'description' => 'Allow Role Permissions.',
+            ],
+            [
+                'module'      => 'Role Permissions',
+                'name'        => 'Role Permissions Assign',
+                'slug'        => generate_slug('role-permissions-assign'),
+                'description' => 'Allow Role Permissions.',
+            ],
             
         ];
 
