@@ -584,6 +584,36 @@ $routes->group(
             'Api\V1\Admin\AuthorProfileController::delete/$1',
             ['filter' => 'permission:author-profile-delete']
         );
+
+        $routes->get(
+            'account-details',
+            'Api\V1\Admin\AccountDetailsController::index',
+            ['filter' => 'permission:account-details-view']
+        );
+
+        $routes->post(
+            'account-details',
+            'Api\V1\Admin\AccountDetailsController::create',
+            ['filter' => 'permission:account-details-create']
+        );
+
+        $routes->get(
+            'account-details/(:segment)',
+            'Api\V1\Admin\AccountDetailsController::show/$1',
+            ['filter' => 'permission:account-details-view']
+        );
+
+        $routes->put(
+            'account-details/(:segment)',
+            'Api\V1\Admin\AccountDetailsController::update/$1',
+            ['filter' => 'permission:account-details-edit']
+        );
+
+        $routes->delete(
+            'account-details/(:segment)',
+            'Api\V1\Admin\AccountDetailsController::delete/$1',
+            ['filter' => 'permission:account-details-delete']
+        );
     }
 );
 
@@ -723,5 +753,15 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'editor-profiles/(:segment)',
         'Api\V1\Public\EditorProfileController::show/$1'
+    );
+
+    $routes->get(
+        'account-details',
+        'Api\V1\Public\AccountDetailsController::index'
+    );
+
+    $routes->get(
+        'account-details/(:segment)',
+        'Api\V1\Public\AccountDetailsController::show/$1'
     );
 });
