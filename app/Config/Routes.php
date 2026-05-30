@@ -656,6 +656,48 @@ $routes->group(
             'Api\V1\Admin\ManuscriptController::publish/$1',
             ['filter' => 'permission:manuscript-publish']
         );
+
+        $routes->get(
+            'author-subscriptions',
+            'Api\V1\Admin\AuthorSubscriptionController::index',
+            ['filter' => 'permission:author-subscription-view']
+        );
+
+        $routes->get(
+            'author-subscriptions/(:segment)',
+            'Api\V1\Admin\AuthorSubscriptionController::show/$1',
+            ['filter' => 'permission:author-subscription-view']
+        );
+
+        $routes->post(
+            'author-subscriptions',
+            'Api\V1\Admin\AuthorSubscriptionController::create',
+            ['filter' => 'permission:author-subscription-create']
+        );
+
+        $routes->post(
+            'author-subscriptions/(:segment)/approve',
+            'Api\V1\Admin\AuthorSubscriptionController::approve/$1',
+            ['filter' => 'permission:author-subscription-approve']
+        );
+
+        $routes->post(
+            'author-subscriptions/(:segment)/reject',
+            'Api\V1\Admin\AuthorSubscriptionController::reject/$1',
+            ['filter' => 'permission:author-subscription-reject']
+        );
+
+        $routes->get(
+            'my-subscriptions',
+            'Api\V1\Admin\AuthorSubscriptionController::mySubscriptions',
+            ['filter' => 'permission:author-subscription-view']
+        );
+
+        $routes->get(
+            'my-active-subscription',
+            'Api\V1\Admin\AuthorSubscriptionController::myActiveSubscription',
+            ['filter' => 'permission:author-subscription-view']
+        );
     }
 );
 
