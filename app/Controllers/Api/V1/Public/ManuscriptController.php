@@ -6,6 +6,7 @@ namespace App\Controllers\Api\V1\Public;
 
 use App\Controllers\Api\V1\BaseApiController;
 use App\Libraries\ManuscriptService;
+use App\Libraries\JwtLibrary;
 use App\Models\ArticleTypeModel;
 use App\Models\DisciplineModel;
 use App\Models\JournalModel;
@@ -40,6 +41,8 @@ class ManuscriptController extends BaseApiController
 
     protected ManuscriptPaymentModel $paymentModel;
 
+    protected JwtLibrary $jwtLibrary;
+
     public function __construct()
     {
         $this->manuscriptModel =
@@ -71,6 +74,8 @@ class ManuscriptController extends BaseApiController
 
         $this->paymentModel =
             new ManuscriptPaymentModel();
+        
+        $this->jwtLibrary          = new JwtLibrary();
     }
 
     /**
@@ -295,22 +300,46 @@ class ManuscriptController extends BaseApiController
 
             $profileId = null;
 
-            /**
-             * Logged in author.
-             */
-            $authUser = service(
-                'authUser'
-            );
+            $submissionSource = 'guest';
 
-            if (
-                isset(
-                    $authUser->profileId
-                )
-            ) {
+            try {
 
-                $profileId =
-                    (int) $authUser
-                        ->profileId;
+                $jwtLibrary = new JwtLibrary();
+
+                $token = $jwtLibrary->getBearerToken(
+                    $this->request->getHeaderLine(
+                        'Authorization'
+                    )
+                );
+
+                if (! empty($token)) {
+
+                    $payload =
+                        $jwtLibrary->decode(
+                            $token
+                        );
+
+                    if (
+                        isset(
+                            $payload->profile_id
+                        )
+                    ) {
+
+                        $profileId =
+                            (int)
+                            $payload->profile_id;
+
+                        $submissionSource =
+                            'registered';
+                    }
+                }
+
+            } catch (\Throwable $e) {
+
+                /**
+                 * Invalid token.
+                 * Continue as guest.
+                 */
             }
 
             $manuscriptData = [
@@ -425,9 +454,7 @@ class ManuscriptController extends BaseApiController
                     $abstractPath,
 
                 'submission_source' =>
-                    $profileId
-                        ? 'registered'
-                        : 'guest',
+                    $submissionSource,
 
                 'current_status' =>
                     'submitted',
