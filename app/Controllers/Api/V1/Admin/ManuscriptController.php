@@ -192,6 +192,77 @@ class ManuscriptController extends BaseApiController
                     'left'
                 );
 
+            $authUser = service('authUser');
+            $roleId = (int) $authUser->roleId;
+
+            if ($roleId === 1) {
+                // Super Admin - No restrictions.
+            }
+            elseif ($roleId === 6) {
+                $builder->where(
+                    'manuscripts.profile_id',
+                    $authUser->profileId
+                );
+                $builder->groupBy(
+                    'manuscripts.id'
+                );
+            }
+            elseif ($roleId === 4 || $roleId === 5) {
+
+                $editorProfile = $this->editorProfileModel
+                    ->where(
+                        'profile_id',
+                        $authUser->profileId
+                    )
+                    ->first();
+
+                if ($editorProfile) {
+
+                    $builder->join(
+                        'manuscript_editor_assignments mea',
+                        'mea.manuscript_id = manuscripts.id',
+                        'inner'
+                    );
+
+                    $builder->where(
+                        'mea.editor_profile_id',
+                        $editorProfile['id']
+                    );
+
+                    $builder->groupBy(
+                        'manuscripts.id'
+                    );
+
+                } else {
+
+                    $builder->where(
+                        '1 = 0',
+                        null,
+                        false
+                    );
+                }
+            }
+            elseif (
+                $roleId === 2
+            ) {
+
+                $builder->whereIn(
+                    'manuscripts.journal_id',
+                    static function ($subQuery) use (
+                        $authUser
+                    ) {
+
+                        return $subQuery
+                            ->select('id')
+                            ->from('journals')
+                            ->where(
+                                'created_by',
+                                $authUser->profileId
+                            );
+                    }
+                );
+            }
+
             if ($search !== '') {
 
                 $builder->groupStart()
