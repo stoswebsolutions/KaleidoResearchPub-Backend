@@ -614,6 +614,48 @@ $routes->group(
             'Api\V1\Admin\AccountDetailsController::delete/$1',
             ['filter' => 'permission:account-details-delete']
         );
+
+        $routes->get(
+            'manuscripts',
+            'Api\V1\Admin\ManuscriptController::index',
+            ['filter' => 'permission:manuscript-view']
+        );
+
+        $routes->get(
+            'manuscripts/(:segment)',
+            'Api\V1\Admin\ManuscriptController::show/$1',
+            ['filter' => 'permission:manuscript-view']
+        );
+
+        $routes->get(
+            'manuscripts/(:segment)/timeline',
+            'Api\V1\Admin\ManuscriptController::timeline/$1',
+            ['filter' => 'permission:manuscript-view']
+        );
+
+        $routes->post(
+            'manuscripts/(:segment)/review',
+            'Api\V1\Admin\ManuscriptController::submitReview/$1',
+            ['filter' => 'permission:manuscript-review']
+        );
+
+        $routes->post(
+            'manuscripts/(:segment)/decision',
+            'Api\V1\Admin\ManuscriptController::decision/$1',
+            ['filter' => 'permission:manuscript-decision']
+        );
+
+        $routes->post(
+            'manuscripts/(:segment)/verify-payment',
+            'Api\V1\Admin\ManuscriptController::verifyPayment/$1',
+            ['filter' => 'permission:manuscript-payment-verify']
+        );
+
+        $routes->post(
+            'manuscripts/(:segment)/publish',
+            'Api\V1\Admin\ManuscriptController::publish/$1',
+            ['filter' => 'permission:manuscript-publish']
+        );
     }
 );
 
@@ -763,5 +805,35 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'account-details/(:segment)',
         'Api\V1\Public\AccountDetailsController::show/$1'
+    );
+
+    $routes->post(
+        'manuscripts',
+        'Api\V1\Public\ManuscriptController::submit'
+    );
+
+    $routes->post(
+        'manuscripts/request-tracking-otp',
+        'Api\V1\Public\ManuscriptController::requestTrackingOtp'
+    );
+
+    $routes->post(
+        'manuscripts/verify-tracking-otp',
+        'Api\V1\Public\ManuscriptController::verifyTrackingOtp'
+    );
+
+    $routes->post(
+        'manuscripts/upload-payment',
+        'Api\V1\Public\ManuscriptController::uploadPayment'
+    );
+
+    $routes->get(
+        'manuscripts/published',
+        'Api\V1\Public\ManuscriptController::published'
+    );
+
+    $routes->get(
+        'manuscripts/published/(:segment)',
+        'Api\V1\Public\ManuscriptController::publishedDetails/$1'
     );
 });
