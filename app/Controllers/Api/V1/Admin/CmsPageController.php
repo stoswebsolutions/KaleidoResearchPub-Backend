@@ -226,11 +226,7 @@ class CmsPageController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload = $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -279,13 +275,6 @@ class CmsPageController extends BaseApiController
                     )
                 ),
 
-                'banner_image' => trim(
-                    (string) (
-                        $payload['banner_image']
-                        ?? ''
-                    )
-                ),
-
                 'sort_order' => (int) (
                     $payload['sort_order']
                     ?? 0
@@ -300,6 +289,13 @@ class CmsPageController extends BaseApiController
 
                 'created_by' => $user['id'],
             ];
+
+            $data['banner_image'] =
+                $this->uploadFile(
+                    'banner_image',
+                    'uploads/cms-pages',
+                    ['jpg','jpeg','png']
+                );
 
             if (
                 ! $this->cmsPageModel->insert(
@@ -354,23 +350,13 @@ class CmsPageController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload = $this->getRequestData();
 
             $authUser = service('authUser');
 
             $user = $authUser->profile;
 
             $data = [
-                'page_key' => trim(
-                    (string) (
-                        $payload['page_key']
-                        ?? $cmsPage['page_key']
-                    )
-                ),
 
                 'title' => trim(
                     (string) (
@@ -417,16 +403,6 @@ class CmsPageController extends BaseApiController
                     )
                 ),
 
-                'banner_image' => trim(
-                    (string) (
-                        $payload['banner_image']
-                        ?? (
-                            $cmsPage['banner_image']
-                            ?? ''
-                        )
-                    )
-                ),
-
                 'sort_order' => (int) (
                     $payload['sort_order']
                     ?? $cmsPage['sort_order']
@@ -441,6 +417,23 @@ class CmsPageController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            $newBannerImage =
+                $this->uploadFile(
+                    'banner_image',
+                    'uploads/cms-pages',
+                    ['jpg', 'jpeg', 'png']
+                );
+
+            if ($newBannerImage !== null) {
+
+                $this->deleteFile(
+                    $cmsPage['banner_image']
+                );
+
+                $data['banner_image'] =
+                    $newBannerImage;
+            }
 
             if (
                 ! $this->cmsPageModel->update(
