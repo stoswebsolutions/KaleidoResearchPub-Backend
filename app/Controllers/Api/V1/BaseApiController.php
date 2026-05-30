@@ -253,15 +253,54 @@ abstract class BaseApiController extends ResourceController
     /**
      * Get JSON request body.
      */
-    protected function getRequestData(): array
+   protected function getRequestData(): array
     {
-        $data = $this->request->getJSON(true);
+        $contentType = strtolower(
+            $this->request->getHeaderLine(
+                'Content-Type'
+            )
+        );
 
-        if (is_array($data)) {
+        /**
+         * JSON Request
+         */
+        if (
+            str_contains(
+                $contentType,
+                'application/json'
+            )
+        ) {
+
+            $data =
+                $this->request->getJSON(
+                    true
+                );
+
+            return is_array($data)
+                ? $data
+                : [];
+        }
+
+        /**
+         * Multipart Form Data
+         * Application X-WWW-Form-Urlencoded
+         */
+        $data =
+            $this->request->getPost();
+
+        if (
+            is_array($data)
+            && ! empty($data)
+        ) {
+
             return $data;
         }
 
-        return $this->request->getPost();
+        /**
+         * PUT / PATCH
+         */
+        return
+            $this->request->getRawInput();
     }
 
     /**
@@ -307,5 +346,154 @@ abstract class BaseApiController extends ResourceController
                 $total / $perPage
             ),
         ];
+    }
+
+    /**
+     * Upload File.
+     */
+    protected function uploadFile(
+        string $fieldName,
+        string $uploadPath,
+        array $allowedExtensions = [],
+        int $maxSizeKb = 5120
+    ): ?string {
+
+        $file = $this->request->getFile(
+            $fieldName
+        );
+
+        if (
+            ! $file
+            || ! $file->isValid()
+        ) {
+            return null;
+        }
+
+        if (
+            ! empty(
+                $allowedExtensions
+            )
+        ) {
+
+            $extension = strtolower(
+                $file->getExtension()
+            );
+
+            if (
+                ! in_array(
+                    $extension,
+                    array_map(
+                        'strtolower',
+                        $allowedExtensions
+                    ),
+                    true
+                )
+            ) {
+
+                throw new \RuntimeException(
+                    sprintf(
+                        '%s file type is not allowed.',
+                        $fieldName
+                    )
+                );
+            }
+        }
+
+        if (
+            (
+                $file->getSize()
+                / 1024
+            ) > $maxSizeKb
+        ) {
+
+            throw new \RuntimeException(
+                sprintf(
+                    '%s exceeds maximum file size limit.',
+                    $fieldName
+                )
+            );
+        }
+
+        $directory =
+            rtrim(
+                FCPATH,
+                '/'
+            )
+            . '/'
+            . trim(
+                $uploadPath,
+                '/'
+            )
+            . '/';
+
+        if (
+            ! is_dir(
+                $directory
+            )
+        ) {
+
+            mkdir(
+                $directory,
+                0755,
+                true
+            );
+        }
+
+        $fileName =
+            $file->getRandomName();
+
+        $file->move(
+            $directory,
+            $fileName
+        );
+
+        return
+            trim(
+                $uploadPath,
+                '/'
+            )
+            . '/'
+            . $fileName;
+    }
+
+    /**
+     * Delete File.
+     */
+    protected function deleteFile(
+        ?string $filePath
+    ): bool {
+
+        if (
+            empty(
+                $filePath
+            )
+        ) {
+
+            return false;
+        }
+
+        $absolutePath =
+            rtrim(
+                FCPATH,
+                '/'
+            )
+            . '/'
+            . ltrim(
+                $filePath,
+                '/'
+            );
+
+        if (
+            ! file_exists(
+                $absolutePath
+            )
+        ) {
+
+            return false;
+        }
+
+        return unlink(
+            $absolutePath
+        );
     }
 }
