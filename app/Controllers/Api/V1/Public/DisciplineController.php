@@ -104,6 +104,7 @@ class DisciplineController extends BaseApiController
                     'active'
                 )
                 ->select([
+                    'disciplines.id',
                     'disciplines.uuid',
                     'disciplines.title',
                     'disciplines.slug',

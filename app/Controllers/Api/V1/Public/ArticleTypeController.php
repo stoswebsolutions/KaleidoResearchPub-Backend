@@ -29,6 +29,7 @@ class ArticleTypeController extends BaseApiController
                 ->active()
                 ->ordered()
                 ->select([
+                    'id',
                     'uuid',
                     'title',
                     'code',
@@ -68,6 +69,7 @@ class ArticleTypeController extends BaseApiController
             $articleType = $this->articleTypeModel
                 ->active()
                 ->select([
+                    'id',
                     'uuid',
                     'title',
                     'code',

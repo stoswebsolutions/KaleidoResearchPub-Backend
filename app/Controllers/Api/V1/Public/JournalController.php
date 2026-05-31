@@ -118,6 +118,7 @@ class JournalController extends BaseApiController
             $builder = $this->journalModel
                 ->active()
                 ->select([
+                    'id',
                     'uuid',
                     'title',
                     'short_title',
