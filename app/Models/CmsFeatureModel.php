@@ -43,7 +43,7 @@ class CmsFeatureModel extends Model
     protected $validationRules = [
         'type' => [
             'label' => 'Type',
-            'rules' => 'required|in_list[whychooseus,guidelines,homepage,journal,author,reviewer,membership,about,general]',
+            'rules' => 'required|in_list[whychooseus,guidelines,instructions,homepage,journal,author,reviewer,membership,about,general]',
         ],
 
         'title' => [
