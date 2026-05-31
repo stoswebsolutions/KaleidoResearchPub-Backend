@@ -1369,11 +1369,17 @@ class ManuscriptController extends BaseApiController
 
                         'journals.title AS journal_title',
 
+                        'article_types.title AS article_title',
+
+                        'disciplines.title AS disciplines_title',
+
                         'manuscript_publications.volume_number',
 
                         'manuscript_publications.issue_number',
 
                         'manuscript_publications.published_date',
+
+                        'manuscripts.corresponding_author_name',
 
                         'manuscript_publications.article_url',
 
@@ -1387,6 +1393,16 @@ class ManuscriptController extends BaseApiController
                     ->join(
                         'journals',
                         'journals.id = manuscripts.journal_id',
+                        'left'
+                    )
+                    ->join(
+                        'article_types',
+                        'article_types.id = manuscripts.article_type_id ',
+                        'left'
+                    )
+                    ->join(
+                        'disciplines',
+                        'disciplines.id = manuscripts.disciplinary_id  ',
                         'left'
                     )
                     ->where(
