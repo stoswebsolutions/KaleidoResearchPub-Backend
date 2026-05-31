@@ -7,6 +7,7 @@ namespace App\Controllers\Api\V1\Public;
 use App\Controllers\Api\V1\BaseApiController;
 use App\Libraries\ManuscriptService;
 use App\Libraries\JwtLibrary;
+use App\Libraries\MailService;
 use App\Models\ArticleTypeModel;
 use App\Models\DisciplineModel;
 use App\Models\JournalModel;
@@ -42,6 +43,7 @@ class ManuscriptController extends BaseApiController
     protected ManuscriptPaymentModel $paymentModel;
 
     protected JwtLibrary $jwtLibrary;
+    protected MailService $mailService;
 
     public function __construct()
     {
@@ -76,6 +78,8 @@ class ManuscriptController extends BaseApiController
             new ManuscriptPaymentModel();
         
         $this->jwtLibrary          = new JwtLibrary();
+
+        $this->mailService          = new MailService();
     }
 
     /**
@@ -984,6 +988,24 @@ class ManuscriptController extends BaseApiController
              * TODO:
              * Send OTP Email.
              */
+            $sent = $this->mailService->sendTemplate(
+                'manuscript-tracking-otp',
+                $email,
+                [
+                    'author_name' => $manuscript['corresponding_author_name'],
+                    'otp' => $otp,
+                    'expiry_minutes' => 10,
+                    'site_name' => 'Kaleido Research Publications',
+                ]
+            );
+
+            if (! $sent) {
+
+                log_message(
+                    'error',
+                    'OTP Email sending failed.'
+                );
+            }
 
             return $this->successResponse(
                 'OTP sent successfully.',

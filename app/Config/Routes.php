@@ -698,6 +698,90 @@ $routes->group(
             'Api\V1\Admin\AuthorSubscriptionController::myActiveSubscription',
             ['filter' => 'permission:author-subscription-view']
         );
+
+        $routes->get(
+            'email-templates',
+            'Api\V1\Admin\EmailTemplateController::index',
+            ['filter' => 'permission:email-template-view']
+        );
+
+        $routes->post(
+            'email-templates',
+            'Api\V1\Admin\EmailTemplateController::create',
+            ['filter' => 'permission:email-template-create']
+        );
+
+        $routes->get(
+            'email-templates/(:segment)',
+            'Api\V1\Admin\EmailTemplateController::show/$1',
+            ['filter' => 'permission:email-template-view']
+        );
+
+        $routes->put(
+            'email-templates/(:segment)',
+            'Api\V1\Admin\EmailTemplateController::update/$1',
+            ['filter' => 'permission:email-template-edit']
+        );
+
+        $routes->delete(
+            'email-templates/(:segment)',
+            'Api\V1\Admin\EmailTemplateController::delete/$1',
+            ['filter' => 'permission:email-template-delete']
+        );
+
+        $routes->get(
+            'email-logs',
+            'Api\V1\Admin\EmailLogController::index',
+            ['filter' => 'permission:email-log-view']
+        );
+
+        $routes->get(
+            'email-logs/(:segment)',
+            'Api\V1\Admin\EmailLogController::show/$1',
+            ['filter' => 'permission:email-log-view']
+        );
+
+        $routes->get(
+            'email-settings',
+            'Api\V1\Admin\EmailSettingController::index',
+            ['filter' => 'permission:email-setting-view']
+        );
+
+        $routes->post(
+            'email-settings',
+            'Api\V1\Admin\EmailSettingController::create',
+            ['filter' => 'permission:email-setting-create']
+        );
+
+        $routes->get(
+            'email-settings/(:segment)',
+            'Api\V1\Admin\EmailSettingController::show/$1',
+            ['filter' => 'permission:email-setting-view']
+        );
+
+        $routes->put(
+            'email-settings/(:segment)',
+            'Api\V1\Admin\EmailSettingController::update/$1',
+            ['filter' => 'permission:email-setting-edit']
+        );
+
+        $routes->delete(
+            'email-settings/(:segment)',
+            'Api\V1\Admin\EmailSettingController::delete/$1',
+            ['filter' => 'permission:email-setting-delete']
+        );
+
+        $routes->post(
+            'email-settings/(:segment)/set-default',
+            'Api\V1\Admin\EmailSettingController::setDefault/$1',
+            ['filter' => 'permission:email-setting-edit']
+        );
+
+        $routes->post(
+            'email-settings/(:segment)/test-connection',
+            'Api\V1\Admin\EmailSettingController::testConnection/$1',
+            ['filter' => 'permission:email-setting-test']
+        );
     }
 );
 

@@ -93,5 +93,6 @@ class Autoload extends AutoloadConfig
          'slug',
          'response',
          'activity_log',
+         'security'
     ];
 }
