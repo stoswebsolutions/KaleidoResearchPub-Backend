@@ -782,6 +782,36 @@ $routes->group(
             'Api\V1\Admin\EmailSettingController::testConnection/$1',
             ['filter' => 'permission:email-setting-test']
         );
+
+        $routes->get(
+            'gallery',
+            'Api\V1\Admin\GalleryController::index',
+            ['filter' => 'permission:gallery-view']
+        );
+
+        $routes->post(
+            'gallery',
+            'Api\V1\Admin\GalleryController::create',
+            ['filter' => 'permission:gallery-create']
+        );
+
+        $routes->get(
+            'gallery/(:segment)',
+            'Api\V1\Admin\GalleryController::show/$1',
+            ['filter' => 'permission:gallery-view']
+        );
+
+        $routes->put(
+            'gallery/(:segment)',
+            'Api\V1\Admin\GalleryController::update/$1',
+            ['filter' => 'permission:gallery-edit']
+        );
+
+        $routes->delete(
+            'gallery/(:segment)',
+            'Api\V1\Admin\GalleryController::delete/$1',
+            ['filter' => 'permission:gallery-delete']
+        );
     }
 );
 
@@ -961,5 +991,15 @@ $routes->group('api/v1/public', static function ($routes) {
     $routes->get(
         'manuscripts/published/(:segment)',
         'Api\V1\Public\ManuscriptController::publishedDetails/$1'
+    );
+
+    $routes->get(
+        'gallery',
+        'Api\V1\Public\GalleryController::index'
+    );
+
+    $routes->get(
+        'gallery/(:segment)',
+        'Api\V1\Public\GalleryController::show/$1'
     );
 });
