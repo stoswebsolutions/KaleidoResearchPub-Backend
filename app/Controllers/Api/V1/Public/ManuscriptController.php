@@ -1072,6 +1072,18 @@ class ManuscriptController extends BaseApiController
                 ]);
             }
 
+            $latestPayment =
+            $this->paymentModel
+                ->where(
+                    'manuscript_id',
+                    $manuscript['id']
+                )
+                ->orderBy(
+                    'id',
+                    'DESC'
+                )
+                ->first();
+
             $verified =
                 $this->trackingOtpModel
                     ->verifyOtp(
@@ -1092,6 +1104,8 @@ class ManuscriptController extends BaseApiController
                 [
                     'manuscript' =>
                         $manuscript,
+                    'payment' =>
+                        $latestPayment,
                 ]
             );
 
