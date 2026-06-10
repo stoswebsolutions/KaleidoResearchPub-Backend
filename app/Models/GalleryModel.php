@@ -73,7 +73,7 @@ class GalleryModel extends Model
 
         'reference_type' => [
             'label' => 'Reference Type',
-            'rules' => 'permit_empty|in_list[banner,gallery,event,conference,workshop,seminar,announcement,journal,award,other]',
+            'rules' => 'permit_empty|in_list[banner,payment,gallery,event,conference,workshop,seminar,announcement,journal,award,other]',
         ],
 
         'reference_id' => [
