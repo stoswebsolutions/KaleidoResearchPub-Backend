@@ -100,6 +100,7 @@ class SubscriptionPlanController extends BaseApiController
             $builder = $this->subscriptionPlanModel
                 ->active()
                 ->select([
+                    'id',
                     'uuid',
                     'plan_name',
                     'slug',
