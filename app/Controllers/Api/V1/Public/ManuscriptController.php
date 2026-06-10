@@ -1379,6 +1379,8 @@ class ManuscriptController extends BaseApiController
 
                         'manuscripts.title',
 
+                        'manuscripts.abstract',
+
                         'manuscripts.doi',
 
                         'journals.title AS journal_title',
