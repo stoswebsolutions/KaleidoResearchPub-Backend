@@ -373,7 +373,7 @@ class AuthorProfileController extends BaseApiController
                     'left'
                 )
                 ->where(
-                    'author_profiles.uuid',
+                    'profiles.uuid',
                     (string) $id
                 )
                 ->first();
@@ -421,11 +421,8 @@ class AuthorProfileController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $profile = null;
 
