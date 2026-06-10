@@ -46,6 +46,11 @@ class RoleModel extends Model
     protected $deletedField  = 'deleted_at';
 
     protected $validationRules = [
+        
+        'id' => [
+            'rules' => 'permit_empty|integer',
+        ],
+
         'uuid' => [
             'rules' => 'permit_empty|max_length[36]|is_unique[roles.uuid,id,{id}]',
         ],

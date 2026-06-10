@@ -70,6 +70,7 @@ class RoleController extends BaseApiController
 
             $builder = $this->roleModel
                 ->select([
+                    'id',
                     'uuid',
                     'name',
                     'slug',
@@ -140,6 +141,7 @@ class RoleController extends BaseApiController
             return $this->successResponse(
                 'Role fetched successfully.',
                 [
+                    'id'        => $role['id'],
                     'uuid'        => $role['uuid'],
                     'name'        => $role['name'],
                     'slug'        => $role['slug'],
@@ -168,11 +170,7 @@ class RoleController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload = $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -235,17 +233,15 @@ class RoleController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload = $this->getRequestData();
 
             $authUser = service('authUser');
 
             $user = $authUser->profile;
 
             $data = [
+                'id' => $role['id'],
+                
                 'name'        => trim(
                     (string) (
                         $payload['name']
