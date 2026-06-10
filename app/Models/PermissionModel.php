@@ -67,6 +67,11 @@ class PermissionModel extends Model
     ];
 
     protected $validationMessages = [
+        
+        'id' => [
+            'rules' => 'permit_empty|integer',
+        ],
+        
         'uuid' => [
             'is_unique' => 'UUID already exists.',
         ],
