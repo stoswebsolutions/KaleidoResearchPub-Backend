@@ -25,11 +25,8 @@ class ContactMessageController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $data = [
                 'full_name' => trim(

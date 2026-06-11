@@ -106,11 +106,8 @@ class RolePermissionController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $permissionUuids =
                 $payload['permission_uuids']

@@ -279,11 +279,8 @@ class ProfileController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $role = $this->roleModel
                 ->where(
@@ -418,11 +415,8 @@ class ProfileController extends BaseApiController
                 return $ownershipCheck;
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $role = $this->roleModel
                 ->where(

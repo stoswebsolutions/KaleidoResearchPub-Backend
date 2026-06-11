@@ -259,11 +259,8 @@ class DisciplineController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -372,11 +369,8 @@ class DisciplineController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 

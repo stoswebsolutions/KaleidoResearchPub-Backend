@@ -941,7 +941,7 @@ class ManuscriptController extends BaseApiController
     {
         try {
 
-            $data = $this->request->getJSON(true);
+            $data = $this->getRequestData();
 
             $manuscriptId = trim(
                 (string) ($data['manuscript_id'] ?? '')
@@ -1039,7 +1039,7 @@ class ManuscriptController extends BaseApiController
     {
         try {
 
-            $data = $this->request->getJSON(true);
+            $data = $this->getRequestData();
 
             $manuscriptId = trim(
                 (string) ($data['manuscript_id'] ?? '')
