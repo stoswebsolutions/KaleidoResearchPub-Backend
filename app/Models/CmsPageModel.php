@@ -26,7 +26,7 @@ class CmsPageModel extends Model
         'meta_title',
         'meta_keywords',
         'meta_description',
-        'banner_image',
+        'image',
         'sort_order',
         'status',
         'created_by',
@@ -42,6 +42,11 @@ class CmsPageModel extends Model
     protected $deletedField = 'deleted_at';
 
     protected $validationRules = [
+        
+        'id' => [
+            'rules' => 'permit_empty|integer',
+        ],
+
         'page_key' => [
             'label' => 'Page Key',
             'rules' => 'required|max_length[100]|is_unique[cms_pages.page_key,id,{id}]',
@@ -77,7 +82,7 @@ class CmsPageModel extends Model
             'rules' => 'permit_empty',
         ],
 
-        'banner_image' => [
+        'image' => [
             'label' => 'Banner Image',
             'rules' => 'permit_empty|max_length[255]',
         ],
@@ -113,7 +118,7 @@ class CmsPageModel extends Model
             'max_length' => 'Meta title cannot exceed 255 characters.',
         ],
 
-        'banner_image' => [
+        'image' => [
             'max_length' => 'Banner image path cannot exceed 255 characters.',
         ],
 

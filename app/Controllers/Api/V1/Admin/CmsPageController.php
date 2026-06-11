@@ -102,6 +102,7 @@ class CmsPageController extends BaseApiController
 
             $builder = $this->cmsPageModel
                 ->select([
+                    'id',
                     'uuid',
                     'page_key',
                     'title',
@@ -290,12 +291,32 @@ class CmsPageController extends BaseApiController
                 'created_by' => $user['id'],
             ];
 
-            $data['banner_image'] =
+            /**
+             * Media Upload
+             */
+            $data['image'] =
                 $this->uploadFile(
-                    'banner_image',
+                    'image',
                     'uploads/cms-pages',
-                    ['jpg','jpeg','png']
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
                 );
+
+            if (
+                empty(
+                    $data['image']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'image' =>
+                        'Media file is required.'
+                ]);
+            }
 
             if (
                 ! $this->cmsPageModel->insert(
@@ -348,6 +369,7 @@ class CmsPageController extends BaseApiController
                 return $this->notFoundResponse(
                     'CMS page not found.'
                 );
+                
             }
 
             $payload = $this->getRequestData();
@@ -357,6 +379,8 @@ class CmsPageController extends BaseApiController
             $user = $authUser->profile;
 
             $data = [
+
+                'id' => $cmsPage['id'],
 
                 'title' => trim(
                     (string) (
@@ -418,21 +442,29 @@ class CmsPageController extends BaseApiController
                 'updated_by' => $user['id'],
             ];
 
-            $newBannerImage =
+            /**
+             * Media Upload
+             */
+            $image =
                 $this->uploadFile(
-                    'banner_image',
+                    'image',
                     'uploads/cms-pages',
-                    ['jpg', 'jpeg', 'png']
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
                 );
 
-            if ($newBannerImage !== null) {
+            if ($image !== null) {
 
                 $this->deleteFile(
-                    $cmsPage['banner_image']
+                    $cmsPage['logo']
                 );
 
-                $data['banner_image'] =
-                    $newBannerImage;
+                $data['image'] =
+                    $image;
             }
 
             if (
