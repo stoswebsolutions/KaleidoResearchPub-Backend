@@ -117,6 +117,8 @@ class AccountDetailsController extends BaseApiController
 
             $builder = $this->accountDetailsModel
                 ->select([
+                    'id',
+
                     'uuid',
 
                     'account_holder_name',
@@ -336,11 +338,8 @@ class AccountDetailsController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -406,13 +405,6 @@ class AccountDetailsController extends BaseApiController
                     )
                 ),
 
-                'qr_code_image' => trim(
-                    (string) (
-                        $payload['qr_code_image']
-                        ?? ''
-                    )
-                ),
-
                 'is_primary' => (int) (
                     $payload['is_primary']
                     ?? 0
@@ -432,6 +424,33 @@ class AccountDetailsController extends BaseApiController
 
                 'created_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $data['qr_code_image'] =
+                $this->uploadFile(
+                    'qr_code_image',
+                    'uploads/account',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if (
+                empty(
+                    $data['qr_code_image']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'qr_code_image' =>
+                        'Media file is required.'
+                ]);
+            }
 
             if (
                 ! $this->accountDetailsModel->insert(
@@ -501,17 +520,15 @@ class AccountDetailsController extends BaseApiController
                 return $ownershipCheck;
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
             $user = $authUser->profile;
 
             $data = [
+                'id' => $accountDetails['id'],
 
                 'account_holder_name' => trim(
                     (string) (
@@ -580,16 +597,6 @@ class AccountDetailsController extends BaseApiController
                     )
                 ),
 
-                'qr_code_image' => trim(
-                    (string) (
-                        $payload['qr_code_image']
-                        ?? (
-                            $accountDetails['qr_code_image']
-                            ?? ''
-                        )
-                    )
-                ),
-
                 'is_primary' => (int) (
                     $payload['is_primary']
                     ?? $accountDetails['is_primary']
@@ -609,6 +616,31 @@ class AccountDetailsController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $qr_code_image =
+                $this->uploadFile(
+                    'qr_code_image',
+                    'uploads/account',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if ($qr_code_image !== null) {
+
+                $this->deleteFile(
+                    $accountDetails['qr_code_image']
+                );
+
+                $data['qr_code_image'] =
+                    $qr_code_image;
+            }
 
             if (
                 ! $this->accountDetailsModel->update(

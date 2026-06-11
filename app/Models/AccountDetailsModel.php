@@ -81,6 +81,10 @@ class AccountDetailsModel extends Model
     protected $deletedField = 'deleted_at';
 
     protected $validationRules = [
+        
+        'id' => [
+            'rules' => 'permit_empty|integer',
+        ],
 
         'account_holder_name' => [
             'label' => 'Account Holder Name',
