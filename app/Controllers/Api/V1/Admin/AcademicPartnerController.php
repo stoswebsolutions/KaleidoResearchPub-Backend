@@ -109,6 +109,7 @@ class AcademicPartnerController extends BaseApiController
 
             $builder = $this->academicPartnerModel
                 ->select([
+                    'id',
                     'uuid',
                     'name',
                     'slug',
@@ -245,11 +246,8 @@ class AcademicPartnerController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -259,13 +257,6 @@ class AcademicPartnerController extends BaseApiController
                 'name' => trim(
                     (string) (
                         $payload['name']
-                        ?? ''
-                    )
-                ),
-
-                'logo' => trim(
-                    (string) (
-                        $payload['logo']
                         ?? ''
                     )
                 ),
@@ -334,6 +325,33 @@ class AcademicPartnerController extends BaseApiController
                 'created_by' => $user['id'],
             ];
 
+            /**
+             * Media Upload
+             */
+            $data['logo'] =
+                $this->uploadFile(
+                    'logo',
+                    'uploads/academic',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if (
+                empty(
+                    $data['logo']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'logo' =>
+                        'Media file is required.'
+                ]);
+            }
+
             if (
                 ! $this->academicPartnerModel->insert(
                     $data
@@ -387,31 +405,20 @@ class AcademicPartnerController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
             $user = $authUser->profile;
 
             $data = [
+                'id' => $academicPartner['id'],
+
                 'name' => trim(
                     (string) (
                         $payload['name']
                         ?? $academicPartner['name']
-                    )
-                ),
-
-                'logo' => trim(
-                    (string) (
-                        $payload['logo']
-                        ?? (
-                            $academicPartner['logo']
-                            ?? ''
-                        )
                     )
                 ),
 
@@ -496,6 +503,31 @@ class AcademicPartnerController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $logo =
+                $this->uploadFile(
+                    'logo',
+                    'uploads/academic',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if ($logo !== null) {
+
+                $this->deleteFile(
+                    $academicPartner['logo']
+                );
+
+                $data['logo'] =
+                    $logo;
+            }
 
             if (
                 ! $this->academicPartnerModel->update(
