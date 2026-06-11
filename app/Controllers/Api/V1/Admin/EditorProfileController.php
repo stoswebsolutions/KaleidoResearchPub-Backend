@@ -128,6 +128,7 @@ class EditorProfileController extends BaseApiController
 
             $builder = $this->editorProfileModel
                 ->select([
+                    'editor_profiles.id',
                     'editor_profiles.uuid',
                     'editor_profiles.editor_type',
                     'editor_profiles.full_name',
@@ -267,6 +268,7 @@ class EditorProfileController extends BaseApiController
             $editorProfile = $this->editorProfileModel
                 ->select([
                     'editor_profiles.id',
+
                     'editor_profiles.uuid',
 
                     'editor_profiles.profile_id',
@@ -372,11 +374,8 @@ class EditorProfileController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $profile = null;
 
@@ -483,13 +482,6 @@ class EditorProfileController extends BaseApiController
                     )
                 ),
 
-                'profile_image' => trim(
-                    (string) (
-                        $payload['profile_image']
-                        ?? ''
-                    )
-                ),
-
                 'profile_slug' => trim(
                     (string) (
                         $payload['profile_slug']
@@ -559,6 +551,33 @@ class EditorProfileController extends BaseApiController
                 'created_by' => $user['id'],
             ];
 
+            /**
+             * Media Upload
+             */
+            $data['profile_image'] =
+                $this->uploadFile(
+                    'profile_image',
+                    'uploads/editor',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if (
+                empty(
+                    $data['profile_image']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'profile_image' =>
+                        'Media file is required.'
+                ]);
+            }
+
             if (
                 ! $this->editorProfileModel->insert(
                     $data
@@ -627,11 +646,8 @@ class EditorProfileController extends BaseApiController
                 return $ownershipCheck;
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $profile = null;
 
@@ -660,6 +676,7 @@ class EditorProfileController extends BaseApiController
             $user = $authUser->profile;
 
             $data = [
+                'id' => $editorProfile['id'],
 
                 'profile_id' => $profile['id']
                     ?? $editorProfile['profile_id'],
@@ -763,16 +780,6 @@ class EditorProfileController extends BaseApiController
                     )
                 ),
 
-                'profile_image' => trim(
-                    (string) (
-                        $payload['profile_image']
-                        ?? (
-                            $editorProfile['profile_image']
-                            ?? ''
-                        )
-                    )
-                ),
-
                 'profile_slug' => trim(
                     (string) (
                         $payload['profile_slug']
@@ -859,6 +866,31 @@ class EditorProfileController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $profile_image =
+                $this->uploadFile(
+                    'profile_image',
+                    'uploads/editor',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if ($profile_image !== null) {
+
+                $this->deleteFile(
+                    $editorProfile['profile_image']
+                );
+
+                $data['profile_image'] =
+                    $profile_image;
+            }
 
             if (
                 ! $this->editorProfileModel->update(
