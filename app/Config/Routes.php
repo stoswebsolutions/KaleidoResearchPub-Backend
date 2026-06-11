@@ -168,6 +168,11 @@ $routes->group(
         );
 
         $routes->get(
+            'role-permissions',
+            'Api\V1\Admin\RolePermissionController::matrix'
+        );
+
+        $routes->get(
             'profiles',
             'Api\V1\Admin\ProfileController::index',
             [
