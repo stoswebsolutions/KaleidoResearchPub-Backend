@@ -121,6 +121,7 @@ class JournalController extends BaseApiController
 
             $builder = $this->journalModel
                 ->select([
+                    'id',
                     'uuid',
                     'title',
                     'short_title',
@@ -282,11 +283,8 @@ class JournalController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -303,13 +301,6 @@ class JournalController extends BaseApiController
                 'short_title' => trim(
                     (string) (
                         $payload['short_title']
-                        ?? ''
-                    )
-                ),
-
-                'thumbnail' => trim(
-                    (string) (
-                        $payload['thumbnail']
                         ?? ''
                     )
                 ),
@@ -424,6 +415,33 @@ class JournalController extends BaseApiController
                 'created_by' => $user['id'],
             ];
 
+            /**
+             * Media Upload
+             */
+            $data['thumbnail'] =
+                $this->uploadFile(
+                    'thumbnail',
+                    'uploads/journal',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if (
+                empty(
+                    $data['thumbnail']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'thumbnail' =>
+                        'thumbnail file is required.'
+                ]);
+            }
+
             if (
                 ! $this->journalModel->insert(
                     $data
@@ -476,17 +494,16 @@ class JournalController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
             $user = $authUser->profile;
 
             $data = [
+                'id' => $journal['id'],
+                
                 'title' => trim(
                     (string) (
                         $payload['title']
@@ -612,6 +629,31 @@ class JournalController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            /**
+             * Replace Media File
+             */
+            $thumbnail =
+                $this->uploadFile(
+                    'thumbnail',
+                    'uploads/journal',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if ($thumbnail !== null) {
+
+                $this->deleteFile(
+                    $journal['thumbnail']
+                );
+
+                $data['thumbnail'] =
+                    $thumbnail;
+            }
 
             if (
                 ! $this->journalModel->update(
