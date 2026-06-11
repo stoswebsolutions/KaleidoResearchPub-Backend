@@ -101,6 +101,7 @@ class IndexedPartnerController extends BaseApiController
 
             $builder = $this->indexedPartnerModel
                 ->select([
+                    'id',
                     'uuid',
                     'title',
                     'slug',
@@ -221,11 +222,8 @@ class IndexedPartnerController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -235,13 +233,6 @@ class IndexedPartnerController extends BaseApiController
                 'title' => trim(
                     (string) (
                         $payload['title']
-                        ?? ''
-                    )
-                ),
-
-                'logo' => trim(
-                    (string) (
-                        $payload['logo']
                         ?? ''
                     )
                 ),
@@ -274,6 +265,33 @@ class IndexedPartnerController extends BaseApiController
 
                 'created_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $data['logo'] =
+                $this->uploadFile(
+                    'logo',
+                    'uploads/indexed',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if (
+                empty(
+                    $data['logo']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'logo' =>
+                        'Media file is required.'
+                ]);
+            }
 
             if (
                 ! $this->indexedPartnerModel->insert(
@@ -328,31 +346,20 @@ class IndexedPartnerController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
             $user = $authUser->profile;
 
             $data = [
+                'id' => $indexedPartner['id'],
+
                 'title' => trim(
                     (string) (
                         $payload['title']
                         ?? $indexedPartner['title']
-                    )
-                ),
-
-                'logo' => trim(
-                    (string) (
-                        $payload['logo']
-                        ?? (
-                            $indexedPartner['logo']
-                            ?? ''
-                        )
                     )
                 ),
 
@@ -390,6 +397,31 @@ class IndexedPartnerController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $logo =
+                $this->uploadFile(
+                    'logo',
+                    'uploads/indexed',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if ($logo !== null) {
+
+                $this->deleteFile(
+                    $indexedPartner['logo']
+                );
+
+                $data['logo'] =
+                    $logo;
+            }
 
             if (
                 ! $this->indexedPartnerModel->update(

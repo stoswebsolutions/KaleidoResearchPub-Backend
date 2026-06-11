@@ -39,6 +39,11 @@ class IndexedPartnerModel extends Model
     protected $deletedField  = 'deleted_at';
 
     protected $validationRules = [
+        
+        'id' => [
+            'rules' => 'permit_empty|integer',
+        ],
+        
         'title' => [
             'label' => 'Title',
             'rules' => 'required|min_length[2]|max_length[255]',
