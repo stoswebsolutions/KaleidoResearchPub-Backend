@@ -226,4 +226,135 @@ class RolePermissionController extends BaseApiController
             );
         }
     }
+
+    /**
+     * GET /api/v1/admin/role-permissions/matrix
+     */
+    public function matrix(): ResponseInterface
+    {
+        try {
+
+            $roles =
+                $this->roleModel
+                    ->where(
+                        'status',
+                        'active'
+                    )
+                    ->orderBy(
+                        'name',
+                        'ASC'
+                    )
+                    ->findAll();
+
+            $permissions =
+                $this->permissionModel
+                    ->where(
+                        'status',
+                        'active'
+                    )
+                    ->orderBy(
+                        'name',
+                        'ASC'
+                    )
+                    ->findAll();
+
+            $rolePermissions =
+                $this->rolePermissionModel
+                    ->select(
+                        'role_id, permission_id'
+                    )
+                    ->findAll();
+
+            /**
+             * Build lookup.
+             */
+            $assigned = [];
+
+            foreach (
+                $rolePermissions
+                as $rolePermission
+            ) {
+
+                $assigned[
+                    $rolePermission['role_id']
+                ][
+                    $rolePermission['permission_id']
+                ] = true;
+            }
+
+            $result = [];
+
+            foreach (
+                $roles
+                as $role
+            ) {
+
+                $roleData = [
+
+                    'uuid' =>
+                        $role['uuid'],
+
+                    'name' =>
+                        $role['name'],
+
+                    'slug' =>
+                        $role['slug'],
+
+                    'permissions' => [],
+                ];
+
+                foreach (
+                    $permissions
+                    as $permission
+                ) {
+
+                    $roleData['permissions'][] = [
+
+                        'uuid' =>
+                            $permission['uuid'],
+
+                        'module' =>
+                            $permission['module'],
+
+                        'name' =>
+                            $permission['name'],
+
+                        'slug' =>
+                            $permission['slug'],
+
+                        'assigned' =>
+                            isset(
+                                $assigned[
+                                    $role['id']
+                                ][
+                                    $permission['id']
+                                ]
+                            ),
+                    ];
+                }
+
+                $result[] =
+                    $roleData;
+            }
+
+            return $this->successResponse(
+                'Role permission matrix fetched successfully.',
+                [
+                    'roles' =>
+                        $result,
+                ]
+            );
+
+        } catch (Throwable $e) {
+
+            log_message(
+                'error',
+                $e->getMessage()
+            );
+
+            return $this->serverErrorResponse(
+                'Unable to fetch role permission matrix.'
+            );
+        }
+    }
 }
