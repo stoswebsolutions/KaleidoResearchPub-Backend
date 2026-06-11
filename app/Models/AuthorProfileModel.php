@@ -116,6 +116,10 @@ class AuthorProfileModel extends Model
     protected $deletedField = 'deleted_at';
 
     protected $validationRules = [
+        
+        'id' => [
+            'rules' => 'permit_empty|integer',
+        ],
 
         'profile_id' => [
             'label' => 'Profile',

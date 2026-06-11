@@ -131,6 +131,8 @@ class AuthorProfileController extends BaseApiController
 
             $builder = $this->authorProfileModel
                 ->select([
+                    'author_profiles.id',
+
                     'author_profiles.uuid',
 
                     'author_profiles.author_type',
@@ -522,13 +524,6 @@ class AuthorProfileController extends BaseApiController
                     )
                 ),
 
-                'profile_image' => trim(
-                    (string) (
-                        $payload['profile_image']
-                        ?? ''
-                    )
-                ),
-
                 'profile_slug' => trim(
                     (string) (
                         $payload['profile_slug']
@@ -648,6 +643,33 @@ class AuthorProfileController extends BaseApiController
                 'created_by' => $user['id'],
             ];
 
+            /**
+             * Media Upload
+             */
+            $data['profile_image'] =
+                $this->uploadFile(
+                    'profile_image',
+                    'uploads/author',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if (
+                empty(
+                    $data['profile_image']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'profile_image' =>
+                        'Media file is required.'
+                ]);
+            }
+
             if (
                 ! $this->authorProfileModel->insert(
                     $data
@@ -716,11 +738,8 @@ class AuthorProfileController extends BaseApiController
                 return $ownershipCheck;
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $profile = null;
 
@@ -749,6 +768,7 @@ class AuthorProfileController extends BaseApiController
             $user = $authUser->profile;
 
             $data = [
+                'id' => $authorProfile['id'],
 
                 'profile_id' => $profile['id']
                     ?? $authorProfile['profile_id'],
@@ -837,16 +857,6 @@ class AuthorProfileController extends BaseApiController
                         $payload['bio']
                         ?? (
                             $authorProfile['bio']
-                            ?? ''
-                        )
-                    )
-                ),
-
-                'profile_image' => trim(
-                    (string) (
-                        $payload['profile_image']
-                        ?? (
-                            $authorProfile['profile_image']
                             ?? ''
                         )
                     )
@@ -1003,6 +1013,31 @@ class AuthorProfileController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $profile_image =
+                $this->uploadFile(
+                    'profile_image',
+                    'uploads/author',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if ($profile_image !== null) {
+
+                $this->deleteFile(
+                    $authorProfile['profile_image']
+                );
+
+                $data['profile_image'] =
+                    $profile_image;
+            }
 
             if (
                 ! $this->authorProfileModel->update(
