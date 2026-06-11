@@ -153,7 +153,8 @@ abstract class BaseApiController extends ResourceController
      */
     protected function errorResponse(
         string $message,
-        mixed $errors = null,
+        // mixed $errors = null,
+        array $errors = [],
         int $statusCode = ResponseInterface::HTTP_BAD_REQUEST
     ): ResponseInterface {
         return $this->response
