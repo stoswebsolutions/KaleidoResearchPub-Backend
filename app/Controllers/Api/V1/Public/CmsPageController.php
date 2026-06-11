@@ -95,6 +95,7 @@ class CmsPageController extends BaseApiController
             $builder = $this->cmsPageModel
                 ->active()
                 ->select([
+                    'id',
                     'uuid',
                     'page_key',
                     'title',

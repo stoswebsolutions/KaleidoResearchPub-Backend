@@ -102,6 +102,7 @@ class AcademicPartnerController extends BaseApiController
             $builder = $this->academicPartnerModel
                 ->active()
                 ->select([
+                    'id',
                     'uuid',
                     'name',
                     'slug',

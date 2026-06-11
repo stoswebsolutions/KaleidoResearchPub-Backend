@@ -83,7 +83,7 @@ class AuthController extends BaseApiController
             ) {
                 return $this->errorResponse(
                     'Account is temporarily locked. Please try again later.',
-                    null,
+                    [],
                     ResponseInterface::HTTP_LOCKED
                 );
             }

@@ -94,6 +94,7 @@ class IndexedPartnerController extends BaseApiController
             $builder = $this->indexedPartnerModel
                 ->active()
                 ->select([
+                    'id',
                     'uuid',
                     'title',
                     'slug',

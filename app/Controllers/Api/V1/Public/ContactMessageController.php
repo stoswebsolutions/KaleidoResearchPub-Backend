@@ -148,6 +148,7 @@ class ContactMessageController extends BaseApiController
             return $this->successResponse(
                 'Contact message fetched successfully.',
                 [
+                    'id' => $contactMessage['id'],
                     'uuid' => $contactMessage['uuid'],
                     'full_name' => $contactMessage['full_name'],
                     'email' => $contactMessage['email'],

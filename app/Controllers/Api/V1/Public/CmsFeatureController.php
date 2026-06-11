@@ -102,6 +102,7 @@ class CmsFeatureController extends BaseApiController
             $builder = $this->cmsFeatureModel
                 ->active()
                 ->select([
+                    'id',
                     'uuid',
                     'type',
                     'title',

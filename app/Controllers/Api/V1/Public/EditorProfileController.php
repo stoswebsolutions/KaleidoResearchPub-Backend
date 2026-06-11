@@ -105,6 +105,8 @@ class EditorProfileController extends BaseApiController
 
             $builder = $this->editorProfileModel
                 ->select([
+                    'id',
+
                     'uuid',
 
                     'editor_type',
@@ -244,6 +246,8 @@ class EditorProfileController extends BaseApiController
 
             $editorProfile = $this->editorProfileModel
                 ->select([
+                    'id',
+                    
                     'uuid',
 
                     'editor_type',

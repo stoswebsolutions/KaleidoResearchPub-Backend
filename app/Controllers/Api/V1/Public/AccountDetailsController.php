@@ -111,6 +111,8 @@ class AccountDetailsController extends BaseApiController
             $builder = $this->accountDetailsModel
                 ->select([
 
+                    'id',
+
                     'uuid',
 
                     'account_holder_name',
@@ -237,6 +239,8 @@ class AccountDetailsController extends BaseApiController
 
             $accountDetails = $this->accountDetailsModel
                 ->select([
+                    
+                    'id',
 
                     'uuid',
 
