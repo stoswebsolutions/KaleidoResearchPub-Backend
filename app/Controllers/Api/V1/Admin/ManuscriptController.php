@@ -603,7 +603,7 @@ class ManuscriptController extends BaseApiController
                 $this->reviewModel
                     ->reviewExists(
                         (int) $manuscript['id'],
-                        (int) $authUser->profileId
+                        (int) $editorProfile['id']
                     )
             ) {
 
