@@ -460,7 +460,7 @@ class CmsPageController extends BaseApiController
             if ($image !== null) {
 
                 $this->deleteFile(
-                    $cmsPage['logo']
+                    $cmsPage['image']
                 );
 
                 $data['image'] =

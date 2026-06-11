@@ -109,6 +109,7 @@ class CmsFeatureController extends BaseApiController
 
             $builder = $this->cmsFeatureModel
                 ->select([
+                    'id',
                     'uuid',
                     'type',
                     'title',
@@ -239,11 +240,8 @@ class CmsFeatureController extends BaseApiController
     {
         try {
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
@@ -285,13 +283,6 @@ class CmsFeatureController extends BaseApiController
                     )
                 ),
 
-                'image' => trim(
-                    (string) (
-                        $payload['image']
-                        ?? ''
-                    )
-                ),
-
                 'sort_order' => (int) (
                     $payload['sort_order']
                     ?? 0
@@ -306,6 +297,33 @@ class CmsFeatureController extends BaseApiController
 
                 'created_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $data['image'] =
+                $this->uploadFile(
+                    'image',
+                    'uploads/cms-feature',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if (
+                empty(
+                    $data['image']
+                )
+            ) {
+
+                return $this->validationResponse([
+                    'image' =>
+                        'Media file is required.'
+                ]);
+            }
 
             if (
                 ! $this->cmsFeatureModel->insert(
@@ -360,17 +378,17 @@ class CmsFeatureController extends BaseApiController
                 );
             }
 
-            $payload = $this->request->getJSON(true);
-
-            if (! is_array($payload)) {
-                $payload = $this->request->getRawInput();
-            }
+            $payload =
+                $this->getRequestData();
 
             $authUser = service('authUser');
 
             $user = $authUser->profile;
 
             $data = [
+
+                'id' => $cmsFeature['id'],
+
                 'type' => trim(
                     (string) (
                         $payload['type']
@@ -415,16 +433,6 @@ class CmsFeatureController extends BaseApiController
                     )
                 ),
 
-                'image' => trim(
-                    (string) (
-                        $payload['image']
-                        ?? (
-                            $cmsFeature['image']
-                            ?? ''
-                        )
-                    )
-                ),
-
                 'sort_order' => (int) (
                     $payload['sort_order']
                     ?? $cmsFeature['sort_order']
@@ -439,6 +447,31 @@ class CmsFeatureController extends BaseApiController
 
                 'updated_by' => $user['id'],
             ];
+
+            /**
+             * Media Upload
+             */
+            $image =
+                $this->uploadFile(
+                    'image',
+                    'uploads/cms-feature',
+                    [
+                        'jpg',
+                        'jpeg',
+                        'png'
+                    ],
+                    10240
+                );
+
+            if ($image !== null) {
+
+                $this->deleteFile(
+                    $cmsFeature['image']
+                );
+
+                $data['image'] =
+                    $image;
+            }
 
             if (
                 ! $this->cmsFeatureModel->update(

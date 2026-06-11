@@ -41,6 +41,11 @@ class CmsFeatureModel extends Model
     protected $deletedField  = 'deleted_at';
 
     protected $validationRules = [
+        
+        'id' => [
+            'rules' => 'permit_empty|integer',
+        ],
+        
         'type' => [
             'label' => 'Type',
             'rules' => 'required|in_list[whychooseus,guidelines,instructions,homepage,journal,author,reviewer,membership,about,general]',
