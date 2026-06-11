@@ -6,12 +6,14 @@ namespace App\Controllers\Api\V1\Public;
 
 use App\Controllers\Api\V1\BaseApiController;
 use App\Models\JournalModel;
+use App\Models\JournalEditorModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use Throwable;
 
 class JournalController extends BaseApiController
 {
     protected JournalModel $journalModel;
+    protected JournalEditorModel $journalEditorModel;
 
     protected array $allowedSortFields = [
         'title',
@@ -23,6 +25,8 @@ class JournalController extends BaseApiController
     public function __construct()
     {
         $this->journalModel = new JournalModel();
+
+        $this->journalEditorModel = new JournalEditorModel();
     }
 
     /**
@@ -236,7 +240,7 @@ class JournalController extends BaseApiController
     /**
      * GET /public/journals/{uuid}
      */
-    public function show($id = null): ResponseInterface
+    public function show( $id = null ): ResponseInterface
     {
         try {
 
@@ -254,9 +258,97 @@ class JournalController extends BaseApiController
                 );
             }
 
+            /**
+             * Editorial Board
+             */
+            $editorialBoard =
+                db_connect()
+                    ->table(
+                        'journal_editors je'
+                    )
+                    ->select([
+                        'je.editor_role',
+
+                        'ep.uuid',
+                        'ep.full_name',
+                        'ep.designation',
+                        'ep.organization_name',
+                        'ep.country',
+                        'ep.profile_image',
+                        'ep.profile_slug',
+                        'ep.orcid_id',
+                    ])
+                    ->join(
+                        'editor_profiles ep',
+                        'ep.id = je.editor_profile_id'
+                    )
+                    ->where(
+                        'je.journal_id',
+                        $journal['id']
+                    )
+                    ->where(
+                        'je.status',
+                        'active'
+                    )
+                    ->where(
+                        'ep.status',
+                        'active'
+                    )
+                    ->orderBy(
+                        'je.sort_order',
+                        'ASC'
+                    )
+                    ->orderBy(
+                        'ep.full_name',
+                        'ASC'
+                    )
+                    ->get()
+                    ->getResultArray();
+
+            $groupedEditors = [
+
+                'editor_in_chief' => [],
+
+                'editor' => [],
+
+                'managing_editor' => [],
+
+                'associate_editor' => [],
+
+                'editorial_board_member' => [],
+
+                'review_editor' => [],
+
+                'guest_editor' => [],
+            ];
+
+            foreach (
+                $editorialBoard
+                as $editor
+            ) {
+
+                $role =
+                    $editor['editor_role'];
+
+                unset(
+                    $editor['editor_role']
+                );
+
+                $groupedEditors[
+                    $role
+                ][] = $editor;
+            }
+
             return $this->successResponse(
                 'Journal fetched successfully.',
-                $journal
+                [
+
+                    'journal' =>
+                        $journal,
+
+                    'editorial_board' =>
+                        $groupedEditors,
+                ]
             );
 
         } catch (Throwable $e) {
@@ -271,4 +363,5 @@ class JournalController extends BaseApiController
             );
         }
     }
+
 }

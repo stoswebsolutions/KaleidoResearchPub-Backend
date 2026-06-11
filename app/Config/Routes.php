@@ -817,6 +817,32 @@ $routes->group(
             'Api\V1\Admin\GalleryController::delete/$1',
             ['filter' => 'permission:gallery-delete']
         );
+
+        $routes->get(
+            'journal-editors',
+            'Api\V1\Admin\JournalEditorController::index'
+        );
+
+        $routes->post(
+            'journal-editors',
+            'Api\V1\Admin\JournalEditorController::create'
+        );
+
+        $routes->get(
+            'journal-editors/(:segment)',
+            'Api\V1\Admin\JournalEditorController::show/$1'
+        );
+
+        $routes->put(
+            'journal-editors/(:segment)',
+            'Api\V1\Admin\JournalEditorController::update/$1'
+        );
+
+        $routes->delete(
+            'journal-editors/(:segment)',
+            'Api\V1\Admin\JournalEditorController::delete/$1'
+        );
+
     }
 );
 
