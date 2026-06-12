@@ -322,6 +322,76 @@ class JournalController extends BaseApiController
                 'guest_editor' => [],
             ];
 
+            /**
+             * Published Papers
+             */
+            $publishedPapers =
+                db_connect()
+                    ->table(
+                        'manuscripts'
+                    )
+                    ->select([
+
+                        'manuscripts.uuid',
+
+                        'manuscripts.manuscript_id',
+
+                        'manuscripts.title',
+
+                        'manuscripts.abstract',
+
+                        'manuscripts.doi',
+
+                        'article_types.title AS article_type',
+
+                        'disciplines.title AS discipline',
+
+                        'manuscript_publications.volume_number',
+
+                        'manuscript_publications.issue_number',
+
+                        'manuscript_publications.published_date',
+
+                        'manuscripts.corresponding_author_name',
+
+                        'manuscript_publications.article_url',
+
+                        'manuscript_publications.published_pdf',
+                    ])
+                    ->join(
+                        'manuscript_publications',
+                        'manuscript_publications.manuscript_id = manuscripts.id',
+                        'inner'
+                    )
+                    ->join(
+                        'article_types',
+                        'article_types.id = manuscripts.article_type_id',
+                        'left'
+                    )
+                    ->join(
+                        'disciplines',
+                        'disciplines.id = manuscripts.disciplinary_id',
+                        'left'
+                    )
+                    ->where(
+                        'manuscripts.journal_id',
+                        $journal['id']
+                    )
+                    ->where(
+                        'manuscripts.current_status',
+                        'published'
+                    )
+                    ->where(
+                        'manuscripts.final_decision',
+                        'accepted'
+                    )
+                    ->orderBy(
+                        'manuscript_publications.published_date',
+                        'DESC'
+                    )
+                    ->get()
+                    ->getResultArray();
+
             foreach (
                 $editorialBoard
                 as $editor
@@ -348,6 +418,9 @@ class JournalController extends BaseApiController
 
                     'editorial_board' =>
                         $groupedEditors,
+
+                    'published_papers' =>
+                        $publishedPapers,
                 ]
             );
 
